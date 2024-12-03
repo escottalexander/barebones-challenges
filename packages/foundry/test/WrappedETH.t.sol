@@ -188,7 +188,7 @@ contract WrappedETHTest is Test {
         wrappedETH.transferFrom(THIS_CONTRACT,NON_CONTRACT_USER, 1 ether);
     }
 
-    function testWithdrawIsReentrancySafe() public {
+    function testFailReentrancyAttack() public {
         // Whale deposits to the WrappedETH contract
         vm.deal(NON_CONTRACT_USER, 10 ether);
         vm.prank(NON_CONTRACT_USER);
@@ -196,9 +196,9 @@ contract WrappedETHTest is Test {
         // Set up the exploit contract
         ReentrancyTest reentrancyTest = new ReentrancyTest();
         reentrancyTest.setUp{value: 1 ether}(address(wrappedETH));
-        // Hopefully this reverts, otherwise the contract is vulnerable to reentrancy
-        vm.expectRevert();
         reentrancyTest.exploitWithdraw();
+        // If the exploit worked then we should have more than we put in
+        assertGt(address(reentrancyTest).balance, 1 ether);
     }
 }
 
