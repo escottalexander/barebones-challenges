@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import "../contracts/Challenge.sol";
+import "../contracts/MolochRageQuit.sol";
 
 contract MolochRageQuitTest is Test {
     MolochRageQuit public dao;
