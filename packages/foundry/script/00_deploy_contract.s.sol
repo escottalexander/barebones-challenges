@@ -9,7 +9,7 @@ contract DeployContract is ScaffoldETHDeploy {
     MolochRageQuit molochRageQuit = new MolochRageQuit(100);
     console.logString(
       string.concat(
-        "Contract deployed at: ", vm.toString(address(yourContract))
+        "Contract deployed at: ", vm.toString(address(molochRageQuit))
       )
     );
   }
