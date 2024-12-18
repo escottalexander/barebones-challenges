@@ -342,12 +342,10 @@ contract ReentrancyTest {
     deadMansSwitch.withdraw(address(this), 1 ether);
   }
 
-  fallback() external payable {
+  receive() external payable {
     // If the user token balance hasn't been updated or is not checked then we get to call over and over until it is drained
     if (address(deadMansSwitch).balance >= 1 ether) {
       deadMansSwitch.withdraw(address(this), 1 ether);
     }
   }
-
-  receive() external payable { }
 }
