@@ -138,11 +138,13 @@ in a third terminal start the NextJS front end:
 
 ## Solved! (Final Steps)
 Once you have a working solution and all the tests are passing your next move is to deploy your lovely contract to the Sepolia testnet.
+
+### Setting up your wallet (if you haven't already)
 First you will need to generate an account. **You can skip this step if you have already created a keystore on your machine. Keystores are located in \`~/.foundry/keystores\`**
 \`\`\`bash
-  yarn account:generate
+  yarn generate
 \`\`\`
-You can optionally give your new account a name be passing it in like so: \`yarn account:generate NAME-FOR-ACCOUNT\`. The default is \`scaffold-eth-custom\`.
+You can optionally give your new account a name be passing it in like so: \`yarn generate NAME-FOR-ACCOUNT\`. The default is \`scaffold-eth-custom\`.
 
 You will be prompted for a password to encrypt your newly created keystore. Make sure you choose a [good one](https://xkcd.com/936/) if you intend to use your new account for more than testnet funds.
 
@@ -155,11 +157,15 @@ Run the following to view your new address and balances across several networks.
 \`\`\`
 To fund your account with Sepolia ETH simply search for "Sepolia testnet faucet" on Google or ask around in onchain developer groups who are usually more than willing to share. Send the funds to your wallet address and run \`yarn account\` again to verify the funds show in your Sepolia balance.
 
+### Deploying your contract
 Once you have confirmed your balance on Sepolia you can run this command to deploy your contract.
 \`\`\`bash
-  yarn deploy:verify --network sepolia
+  yarn deploy --network sepolia
 \`\`\`
-This command will deploy your contract and verify it with Sepolia Etherscan.
+Now you need to verify it on Sepolia Etherscan.
+\`\`\`bash
+  yarn verify --network sepolia
+\`\`\`
 Copy your deployed contract address from your console and paste it in at [sepolia.etherscan.io](https://sepolia.etherscan.io). You should see a green checkmark on the "Contract" tab showing that the source code has been verified.
 
 Now you can return to the ETH Tech Tree CLI, navigate to this challenge in the tree and submit your deployed contract address. Congratulations!
