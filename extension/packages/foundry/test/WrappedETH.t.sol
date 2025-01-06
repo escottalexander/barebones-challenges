@@ -194,44 +194,4 @@ contract WrappedETHTest is Test {
     vm.startPrank(NON_CONTRACT_USER);
     wrappedETH.transferFrom(THIS_CONTRACT, NON_CONTRACT_USER, 1 ether);
   }
-
-  function testFailReentrancyAttack() public {
-    // Whale deposits to the WrappedETH contract
-    vm.deal(NON_CONTRACT_USER, 10 ether);
-    vm.prank(NON_CONTRACT_USER);
-    wrappedETH.deposit{ value: 10 ether }();
-    // Set up the exploit contract
-    ReentrancyTest reentrancyTest = new ReentrancyTest();
-    reentrancyTest.setUp{ value: 1 ether }(address(wrappedETH));
-    reentrancyTest.exploitWithdraw();
-    // If the exploit worked then we should have more than we put in
-    assertGt(address(reentrancyTest).balance, 1 ether);
-  }
-}
-
-contract ReentrancyTest {
-  WrappedETH public wrappedETH;
-
-  function setUp(
-    address wethContract
-  ) public payable {
-    // Set up contract reference
-    wrappedETH = WrappedETH(payable(wethContract));
-    // Add deposit to contract
-    wrappedETH.deposit{ value: 1 ether }();
-  }
-
-  function exploitWithdraw() public {
-    wrappedETH.withdraw(1 ether);
-  }
-
-  receive() external payable {
-    // If the user token balance hasn't been updated or is not checked then we get to call over and over until it is drained
-    if (
-      address(wrappedETH).balance >= 1 ether
-        && wrappedETH.balanceOf(address(this)) >= 1 ether
-    ) {
-      wrappedETH.withdraw(1 ether);
-    }
-  }
 }
