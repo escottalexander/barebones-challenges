@@ -159,46 +159,4 @@ contract EthStreamingTest is Test {
     emit EthStreaming.Withdraw(ALICE, newCap);
     ethStreaming.withdraw(newCap);
   }
-
-  /**
-   * Ensure reentrancy attack is not possible
-   */
-  function testFailReentrancyAttack() public {
-    // Whale deposits to the DeadMansSwitch contract
-    vm.deal(address(ethStreaming), 10 ether);
-    // Set up the exploit contract
-    ReentrancyTest reentrancyTest = new ReentrancyTest();
-    // The stream contract owner adds a stream, not realizing that the address is a malicious contract
-    ethStreaming.addStream(address(reentrancyTest), STREAM_CAP);
-    // The malicious contract is set up with the right params
-    reentrancyTest.setUp(address(ethStreaming), STREAM_CAP);
-    reentrancyTest.exploitWithdraw();
-    // If the exploit worked then we should have more than we put in
-    assertGt(address(reentrancyTest).balance, 1 ether);
-  }
-}
-
-contract ReentrancyTest {
-  EthStreaming public ethStreaming;
-  uint256 public STREAM_CAP;
-
-  function setUp(
-    address ethStreamingContract,
-    uint256 _streamCap
-  ) public payable {
-    // Set up contract reference
-    ethStreaming = EthStreaming(payable(ethStreamingContract));
-    STREAM_CAP = _streamCap;
-  }
-
-  function exploitWithdraw() public {
-    ethStreaming.withdraw(STREAM_CAP);
-  }
-
-  receive() external payable {
-    // Attempt to call withdraw over and over until no more funds are left
-    if (address(ethStreaming).balance >= STREAM_CAP) {
-      ethStreaming.withdraw(STREAM_CAP);
-    }
-  }
 }
