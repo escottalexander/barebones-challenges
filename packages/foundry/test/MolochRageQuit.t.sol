@@ -114,7 +114,7 @@ contract MolochRageQuitTest is Test {
         );
         dao.vote(1);
         (, , , uint256 votes, ) = dao.getProposal(1);
-        assertEq(votes, 1);
+        assertEq(votes, 100);
     }
 
     function testMemberCanOnlyVoteOnce() public {
@@ -235,17 +235,20 @@ contract MolochRageQuitTest is Test {
         dao.propose(
             address(dao),
             addMemberData(member2, 100),
-            DEADLINE
+            DEADLINE + 1 days
         );
         // Vote for each proposal
         dao.vote(1);
         dao.vote(2);
-        vm.warp(block.timestamp + 2 days);
+        // Warp to after first deadline but before second deadline
+        vm.warp(DEADLINE + 1);
         dao.executeProposal(1);
         assertTrue(dao.isMember(member1));
         vm.startPrank(member1);
         // Vote for the second proposal
         dao.vote(2);
+        // Warp to after second deadline
+        vm.warp(DEADLINE + 1 days + 1);
         dao.executeProposal(2);
         assertTrue(dao.isMember(member2));
         // Now there are three members (including deployer) and three ETH in the treasury
