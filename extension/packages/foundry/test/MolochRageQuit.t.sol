@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.26;
 
-import "../lib/forge-std/src/Test.sol";
+import "forge-std/Test.sol";
 import "../contracts/MolochRageQuit.sol";
 
 contract MolochRageQuitTest is Test {
@@ -12,10 +12,15 @@ contract MolochRageQuitTest is Test {
     uint256 public ONE_ETH = 1 ether;
     uint256 public DEPLOYER_SHARES = 100;
     address public THIS_ADDR = address(this);
-
+    
     uint256 public DEADLINE = block.timestamp + 1 days;
-
-    event ProposalCreated(uint256 proposalId, address proposer, address contractAddr, bytes data, uint256 deadline);
+    event ProposalCreated(
+        uint256 proposalId,
+        address proposer,
+        address contractAddr,
+        bytes data,
+        uint256 deadline
+    );
     event ProposalApproved(uint256 proposalId, address approver);
     event RageQuit(address member, uint256 shareAmount);
     event MemberAdded(address member);
@@ -43,11 +48,24 @@ contract MolochRageQuitTest is Test {
 
     function testProposalCreation() public {
         vm.expectEmit(true, true, true, true);
-        emit ProposalCreated(1, THIS_ADDR, address(dao), addMemberData(member1, 100), DEADLINE);
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        emit ProposalCreated(
+            1,
+            THIS_ADDR,
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
 
-        (address proposer, address contractAddr, bytes memory data, uint256 votes, uint256 deadline) =
-            dao.getProposal(1);
+        (address proposer,
+        address contractAddr,
+        bytes memory data,
+        uint256 votes,
+        uint256 deadline) = dao.getProposal(1);
         assertEq(proposer, THIS_ADDR);
         assertEq(contractAddr, address(dao));
         assertEq(data, addMemberData(member1, 100));
@@ -55,20 +73,32 @@ contract MolochRageQuitTest is Test {
         assertEq(deadline, DEADLINE);
     }
 
-    function testCreateProposalNonMember() public {
+    function testCreateProposalNonMember () public {
         vm.startPrank(nonMember1);
         vm.expectRevert();
-        dao.propose(address(dao), addMemberData(nonMember1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(nonMember1, 100),
+            DEADLINE
+        );
     }
 
     function testProposalAddressZero() public {
         vm.expectRevert();
-        dao.propose(address(0), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(0),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
     }
 
     function testInvalidProposalDeadline() public {
         vm.expectRevert();
-        dao.propose(address(dao), addMemberData(member1, 100), block.timestamp - 1);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            block.timestamp - 1
+        );
     }
 
     function testProposalExists() public {
@@ -77,28 +107,44 @@ contract MolochRageQuitTest is Test {
     }
 
     function testMemberCanVote() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         dao.vote(1);
-        (,,, uint256 votes,) = dao.getProposal(1);
+        (, , , uint256 votes, ) = dao.getProposal(1);
         assertEq(votes, 100);
     }
 
     function testMemberCanOnlyVoteOnce() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         dao.vote(1);
         vm.expectRevert();
         dao.vote(1);
     }
 
     function testNonMembersCannotVote() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         vm.prank(nonMember1);
         vm.expectRevert();
         dao.vote(1);
     }
 
     function testProposalExecution() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
 
         dao.vote(1);
         vm.warp(block.timestamp + 2 days);
@@ -108,7 +154,11 @@ contract MolochRageQuitTest is Test {
     }
 
     function testAddMember() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         dao.vote(1);
         vm.warp(block.timestamp + 2 days);
         vm.expectEmit(true, true, true, true);
@@ -118,20 +168,32 @@ contract MolochRageQuitTest is Test {
     }
 
     function testDeadlineNotReached() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         vm.expectRevert();
         dao.executeProposal(1);
     }
 
     function testProposalRejected() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         vm.warp(block.timestamp + 2 days);
         vm.expectRevert();
         dao.executeProposal(1);
     }
 
     function testProposalAlreadyVotedEvent() public {
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         dao.vote(1);
         vm.expectRevert();
         dao.vote(1);
@@ -140,18 +202,22 @@ contract MolochRageQuitTest is Test {
     function testRageQuit() public {
         // This will add 1 ETH to treasury
         payable(address(dao)).transfer(ONE_ETH);
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         dao.vote(1);
         vm.warp(block.timestamp + 2 days);
         dao.executeProposal(1);
         assertTrue(dao.isMember(member1));
         vm.startPrank(member1);
-        uint256 balanceBefore = address(member1).balance;
+        uint balanceBefore = address(member1).balance;
         vm.expectEmit(true, true, true, true);
         emit RageQuit(member1, ONE_ETH / 2);
         dao.rageQuit();
         assertFalse(dao.isMember(member1));
-        uint256 balanceAfter = address(member1).balance;
+        uint balanceAfter = address(member1).balance;
         assertEq(balanceAfter, balanceBefore + ONE_ETH / 2);
     }
 
@@ -159,18 +225,28 @@ contract MolochRageQuitTest is Test {
         // Add three ETH to the treasury
         payable(address(dao)).transfer(ONE_ETH * 3);
         // Propose to add new member
-        dao.propose(address(dao), addMemberData(member1, 100), DEADLINE);
+        dao.propose(
+            address(dao),
+            addMemberData(member1, 100),
+            DEADLINE
+        );
         // Propose to add a second member
-        dao.propose(address(dao), addMemberData(member2, 100), DEADLINE + 1 days);
+        dao.propose(
+            address(dao),
+            addMemberData(member2, 100),
+            DEADLINE + 1 days
+        );
         // Vote for each proposal
         dao.vote(1);
         dao.vote(2);
+        // Warp to after first deadline but before second deadline
         vm.warp(DEADLINE + 1);
         dao.executeProposal(1);
         assertTrue(dao.isMember(member1));
         vm.startPrank(member1);
         // Vote for the second proposal
         dao.vote(2);
+        // Warp to after second deadline
         vm.warp(DEADLINE + 1 days + 1);
         dao.executeProposal(2);
         assertTrue(dao.isMember(member2));
@@ -193,10 +269,14 @@ contract MolochRageQuitTest is Test {
         dao.rageQuit();
     }
 
-    receive() external payable { }
+    receive() external payable {}
 
     // Helper functions
-    function addMemberData(address member, uint256 share) public pure returns (bytes memory) {
-        return abi.encodeWithSignature("addMember(address,uint256)", member, share);
+    function addMemberData(address member, uint share) public pure returns (bytes memory) {
+        return abi.encodeWithSignature(
+            "addMember(address,uint256)",
+            member,
+            share
+        );
     }
 }
