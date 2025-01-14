@@ -5,13 +5,9 @@ import "../contracts/EthStreaming.sol";
 import "./DeployHelpers.s.sol";
 
 contract DeployContracts is ScaffoldETHDeploy {
-  // use `deployer` from `ScaffoldETHDeploy`
-  function run() external ScaffoldEthDeployerRunner {
-    EthStreaming ethStreaming = new EthStreaming(2592000);
-    console.logString(
-      string.concat(
-        "Challenge deployed at: ", vm.toString(address(ethStreaming))
-      )
-    );
-  }
+    // use `deployer` from `ScaffoldETHDeploy`
+    function run() external ScaffoldEthDeployerRunner {
+        EthStreaming ethStreaming = new EthStreaming(2592000);
+        console.logString(string.concat("Challenge deployed at: ", vm.toString(address(ethStreaming))));
+    }
 }
