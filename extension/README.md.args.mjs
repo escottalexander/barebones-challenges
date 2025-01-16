@@ -16,7 +16,7 @@ You challenge starts in \`packages/foundry/MolochRageQuit.sol\`
 
 ### Instructions
 
-Start by creating a contract called \`MolochRageQuit\`. In the constructor expect ot be given a uint parameter representing how many shares to allocate to the deployer address.
+Start by creating a contract called \`MolochRageQuit\`. In the constructor expect to be given a uint parameter representing how many shares to allocate to the deployer address.
 
 Then define the following functions:
 - \`propose(address contractToCall, bytes data, uint deadline)\` Only members should be able to call this function. Create a proposal that contains a contract address to call, the data with which to call it, and the deadline by which the voting must be completed. Emit an event \`ProposalCreated(uint proposalId, address proposer, address contractToCall, bytes dataToCallWith, uint deadline)\`.
