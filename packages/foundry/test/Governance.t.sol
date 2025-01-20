@@ -9,7 +9,7 @@ contract GovernanceTest is Test {
     DecentralizedResistanceToken public token;
     uint proposalId;
     Governance public governance;
-    uint votingPeriod = votingPeriod; // 1 day
+    uint votingPeriod = 1 days;
     address public userOne = address(0x123);
     address public userTwo = address(0x456);
     address public userThree = address(0x782);
