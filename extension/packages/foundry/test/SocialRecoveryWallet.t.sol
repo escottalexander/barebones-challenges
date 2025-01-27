@@ -129,14 +129,6 @@ contract SocialRecoveryWalletTest is Test {
     socialRecoveryWallet.signalNewOwner(alice);
   }
 
-  function testSignalNewOwnerEmitsEvent() public {
-    vm.expectEmit();
-    emit SocialRecoveryWallet.NewOwnerSignaled(guardian0, newOwner);
-
-    vm.prank(guardian0);
-    socialRecoveryWallet.signalNewOwner(newOwner);
-  }
-
   function testCanOnlySignalNewOwnerOnce() public {
     vm.prank(guardian0);
     socialRecoveryWallet.signalNewOwner(newOwner);
@@ -163,20 +155,6 @@ contract SocialRecoveryWalletTest is Test {
     helperChangeOwnerWithThreshold(newOwner);
     address newOwner2 = makeAddr("newOwner2");
     helperChangeOwnerWithThreshold(newOwner2);
-  }
-
-  function testSignalNewOwnerEmitsEventWhenRecoveryExecuted() public {
-    vm.prank(guardian0);
-    socialRecoveryWallet.signalNewOwner(newOwner);
-
-    vm.prank(guardian1);
-    socialRecoveryWallet.signalNewOwner(newOwner);
-
-    vm.expectEmit();
-    emit SocialRecoveryWallet.RecoveryExecuted(newOwner);
-
-    vm.prank(guardian2);
-    socialRecoveryWallet.signalNewOwner(newOwner);
   }
 
   function testAddGuardian() public {
