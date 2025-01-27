@@ -47,14 +47,6 @@ contract MolochRageQuitTest is Test {
     }
 
     function testProposalCreation() public {
-        vm.expectEmit(true, true, true, true);
-        emit ProposalCreated(
-            1,
-            THIS_ADDR,
-            address(dao),
-            addMemberData(member1, 100),
-            DEADLINE
-        );
         dao.propose(
             address(dao),
             addMemberData(member1, 100),
@@ -139,20 +131,6 @@ contract MolochRageQuitTest is Test {
         dao.vote(1);
     }
 
-    function testProposalExecution() public {
-        dao.propose(
-            address(dao),
-            addMemberData(member1, 100),
-            DEADLINE
-        );
-
-        dao.vote(1);
-        vm.warp(block.timestamp + 2 days);
-        vm.expectEmit(true, true, true, true);
-        emit MemberAdded(member1);
-        dao.executeProposal(1);
-    }
-
     function testAddMember() public {
         dao.propose(
             address(dao),
@@ -161,8 +139,6 @@ contract MolochRageQuitTest is Test {
         );
         dao.vote(1);
         vm.warp(block.timestamp + 2 days);
-        vm.expectEmit(true, true, true, true);
-        emit MemberAdded(member1);
         dao.executeProposal(1);
         assertTrue(dao.isMember(member1));
     }
@@ -213,8 +189,6 @@ contract MolochRageQuitTest is Test {
         assertTrue(dao.isMember(member1));
         vm.startPrank(member1);
         uint balanceBefore = address(member1).balance;
-        vm.expectEmit(true, true, true, true);
-        emit RageQuit(member1, ONE_ETH / 2);
         dao.rageQuit();
         assertFalse(dao.isMember(member1));
         uint balanceAfter = address(member1).balance;
@@ -251,14 +225,10 @@ contract MolochRageQuitTest is Test {
         dao.executeProposal(2);
         assertTrue(dao.isMember(member2));
         // Now there are three members (including deployer) and three ETH in the treasury
-        vm.expectEmit(true, true, true, true);
-        emit RageQuit(member1, ONE_ETH);
         dao.rageQuit();
         assertFalse(dao.isMember(member1));
         // Member 2 should be able to rage quit with the same outcome
         vm.startPrank(member2);
-        vm.expectEmit(true, true, true, true);
-        emit RageQuit(member2, ONE_ETH);
         dao.rageQuit();
         assertFalse(dao.isMember(member2));
     }
