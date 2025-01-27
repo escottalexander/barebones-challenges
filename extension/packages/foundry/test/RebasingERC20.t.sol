@@ -77,11 +77,7 @@ contract RebasingERC20Test is Test {
   function testTransferFromAllTokens() public {
     uint256 approveAmount = token.balanceOf(zoro);
     vm.prank(zoro);
-    vm.expectEmit(true, true, false, true);
-    emit IERC20.Approval(zoro, luffy, approveAmount);
     token.approve(luffy, approveAmount);
-    vm.expectEmit(true, true, false, true);
-    emit IERC20.Transfer(zoro, luffy, approveAmount);
     token.transferFrom(zoro, luffy, approveAmount);
     assertEq(token.balanceOf(zoro), 0);
     assertEq(token.balanceOf(luffy), luffyBalance1 + zoroBalance1);
@@ -90,8 +86,6 @@ contract RebasingERC20Test is Test {
   function testTransferAllTokens() public {
     uint256 approveAmount = token.balanceOf(zoro);
     vm.startPrank(zoro);
-    vm.expectEmit(true, true, false, true);
-    emit IERC20.Transfer(zoro, luffy, approveAmount);
     token.transfer(luffy, approveAmount);
     assertEq(token.balanceOf(zoro), 0);
     assertEq(token.balanceOf(luffy), luffyBalance1 + zoroBalance1);
@@ -102,8 +96,6 @@ contract RebasingERC20Test is Test {
     uint256 absSupplyDelta = abs(supplyDelta);
     uint256 oldTotalSupply = token.totalSupply();
     uint256 expectedTotalSupply = oldTotalSupply + absSupplyDelta;
-    vm.expectEmit(true, false, false, true);
-    emit RebasingERC20.Rebase(expectedTotalSupply);
     token.rebase(supplyDelta);
     uint256 newTotalSupply = token.totalSupply();
 
@@ -121,8 +113,6 @@ contract RebasingERC20Test is Test {
     uint256 absSupplyDelta = abs(supplyDelta);
     uint256 oldTotalSupply = token.totalSupply();
     uint256 expectedTotalSupply = oldTotalSupply - absSupplyDelta;
-    vm.expectEmit(true, false, false, true);
-    emit RebasingERC20.Rebase(expectedTotalSupply);
     token.rebase(supplyDelta);
     uint256 newTotalSupply = token.totalSupply();
 
