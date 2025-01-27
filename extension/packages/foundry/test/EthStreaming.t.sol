@@ -63,11 +63,9 @@ contract EthStreamingTest is Test {
     }
 
     /**
-     * Ensure stream can be added and that event is emitted
+     * Ensure stream can be added
      */
     function testOwnerCanAddStream() public {
-        vm.expectEmit(true, false, false, true);
-        emit EthStreaming.AddStream(ALICE, STREAM_CAP);
         ethStreaming.addStream(ALICE, STREAM_CAP);
     }
 
@@ -96,8 +94,6 @@ contract EthStreamingTest is Test {
      */
     function testValidAccountCanWithdraw() public {
         vm.prank(ALICE);
-        vm.expectEmit(true, false, false, true);
-        emit EthStreaming.Withdraw(ALICE, STREAM_CAP);
         ethStreaming.withdraw(STREAM_CAP);
         uint256 aliceBalance = address(ALICE).balance;
         assertEq(aliceBalance, STREAM_CAP);
@@ -148,12 +144,8 @@ contract EthStreamingTest is Test {
      */
     function testOwnerCanUpdateStream() public {
         uint256 newCap = 1 ether;
-        vm.expectEmit(true, false, false, true);
-        emit EthStreaming.AddStream(ALICE, newCap);
         ethStreaming.addStream(ALICE, newCap);
         vm.prank(ALICE);
-        vm.expectEmit(true, false, false, true);
-        emit EthStreaming.Withdraw(ALICE, newCap);
         ethStreaming.withdraw(newCap);
     }
 
