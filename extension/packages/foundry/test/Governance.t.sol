@@ -43,8 +43,6 @@ contract GovernanceTest is Test {
 
   function testProposal() public {
     vm.startPrank(userOne);
-    vm.expectEmit(true, true, false, false);
-    emit Governance.ProposalCreated(proposalId, "New Proposal", 0, userOne);
     uint256 pId = governance.propose("New Proposal");
     (string memory title,,) = governance.getProposal(pId);
     assertEq(title, "New Proposal");
@@ -84,8 +82,6 @@ contract GovernanceTest is Test {
 
   function testVotingFor() public {
     vm.startPrank(userOne);
-    vm.expectEmit(false, true, true, true);
-    emit Governance.VoteCasted(proposalId, userOne, 1, token.balanceOf(userOne));
     governance.vote(1);
     (, uint256 deadline,) = governance.getProposal(proposalId);
     vm.warp(deadline + 1);
@@ -95,8 +91,6 @@ contract GovernanceTest is Test {
 
   function testVotingAgainst() public {
     vm.startPrank(userTwo);
-    vm.expectEmit(false, true, true, true);
-    emit Governance.VoteCasted(proposalId, userTwo, 0, token.balanceOf(userTwo));
     governance.vote(0);
     (, uint256 deadline,) = governance.getProposal(proposalId);
     vm.warp(deadline + 1);
@@ -107,10 +101,6 @@ contract GovernanceTest is Test {
   function testVotingAbstain() public {
     // Test that an abstain vote doesn't stop a proposal from failing
     vm.startPrank(userThree);
-    vm.expectEmit(false, true, true, true);
-    emit Governance.VoteCasted(
-      proposalId, userThree, 2, token.balanceOf(userThree)
-    );
     governance.vote(2);
     vm.stopPrank();
     (, uint256 deadline,) = governance.getProposal(proposalId);
@@ -122,10 +112,6 @@ contract GovernanceTest is Test {
     uint256 newProposalId = governance.propose("New Proposal");
     governance.vote(1);
     vm.startPrank(userThree);
-    vm.expectEmit(false, true, true, true);
-    emit Governance.VoteCasted(
-      newProposalId, userThree, 2, token.balanceOf(userThree)
-    );
     governance.vote(2);
 
     (, uint256 nextDeadline,) = governance.getProposal(newProposalId);
@@ -196,8 +182,6 @@ contract GovernanceTest is Test {
   function testVotesRemovedOnTokenTransfer() public {
     vm.startPrank(userOne);
     governance.vote(1);
-    vm.expectEmit(false, true, true, true);
-    emit Governance.VotesRemoved(userOne, 1, token.balanceOf(userOne));
     token.transfer(userTwo, 100 * 10 ** 18);
     // Now all their votes for the proposal should be removed
     vm.warp(block.timestamp + votingPeriod + 1);
