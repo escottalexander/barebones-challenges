@@ -8,7 +8,7 @@ contract Governance {
     constructor(address token, uint votingPeriod) {}
     function propose(string memory title) public returns (uint) {}
     function getProposal(uint pId) public view returns (string memory title, uint deadline, uint votes) {}
-    function vote(uint pId) public {}
+    function vote(uint8 voteType) public {}
     function removeVotes(address from) public {}
     function getResult(uint pId) public view returns (bool) {}
 }
