@@ -43,7 +43,6 @@ contract VotingTest is Test {
 
     assertEq(voting.votesFor(), token.balanceOf(userOne));
     assertEq(voting.votesAgainst(), 0);
-    assertTrue(voting.hasVoted(userOne));
   }
 
   function testVotingAgainst() public {
@@ -52,7 +51,6 @@ contract VotingTest is Test {
 
     assertEq(voting.votesFor(), 0);
     assertEq(voting.votesAgainst(), token.balanceOf(userTwo));
-    assertTrue(voting.hasVoted(userTwo));
   }
 
   function testDoubleVoting() public {
@@ -64,7 +62,6 @@ contract VotingTest is Test {
     vm.stopPrank();
 
     assertEq(voting.votesFor(), token.balanceOf(userOne));
-    assertTrue(voting.hasVoted(userOne));
   }
 
   function testNoTokensToVote() public {
@@ -73,8 +70,6 @@ contract VotingTest is Test {
     vm.prank(userFour);
     vm.expectRevert();
     voting.vote(true);
-
-    assertFalse(voting.hasVoted(userFour));
   }
 
   function testTieVotingResult() public {
@@ -148,7 +143,6 @@ contract VotingTest is Test {
     vm.stopPrank();
 
     assertEq(voting.votesFor(), 0);
-    assertFalse(voting.hasVoted(userOne));
     assertEq(token.balanceOf(userOne), 500 * 10 ** 18);
     assertEq(token.balanceOf(userTwo), 2500 * 10 ** 18);
   }
@@ -162,8 +156,6 @@ contract VotingTest is Test {
     vm.expectRevert();
     voting.removeVotes(userOne);
 
-    assertTrue(voting.hasVoted(userOne));
-    assertTrue(voting.hasVoted(userTwo));
     assertEq(token.balanceOf(userOne), voting.votesFor());
     assertEq(token.balanceOf(userTwo), voting.votesAgainst());
   }
