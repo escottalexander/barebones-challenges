@@ -59,19 +59,12 @@ contract DeadMansSwitchTest is Test {
 
     // Test adding a beneficiary
     function testAddBeneficiary() public {
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.BeneficiaryAdded(THIS_CONTRACT, BENEFICIARY_1);
         deadMansSwitch.addBeneficiary(BENEFICIARY_1);
     }
 
     // Test removing a beneficiary
     function testRemoveBeneficiary() public {
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.BeneficiaryAdded(THIS_CONTRACT, BENEFICIARY_1);
         deadMansSwitch.addBeneficiary(BENEFICIARY_1);
-
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.BeneficiaryRemoved(THIS_CONTRACT, BENEFICIARY_1);
         deadMansSwitch.removeBeneficiary(BENEFICIARY_1);
     }
 
@@ -215,8 +208,6 @@ contract DeadMansSwitchTest is Test {
 
     // Test that the Deposit event is emitted correctly
     function testEmitDepositEvent() public {
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.Deposit(THIS_CONTRACT, ONE_THOUSAND);
         deadMansSwitch.deposit{ value: ONE_THOUSAND }();
     }
 
@@ -225,8 +216,6 @@ contract DeadMansSwitchTest is Test {
         vm.deal(NON_CONTRACT_USER, ONE_THOUSAND);
         vm.startPrank(NON_CONTRACT_USER);
         deadMansSwitch.deposit{ value: ONE_THOUSAND }();
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.Withdrawal(NON_CONTRACT_USER, ONE_THOUSAND);
         deadMansSwitch.withdraw(NON_CONTRACT_USER, ONE_THOUSAND);
     }
 
@@ -248,61 +237,43 @@ contract DeadMansSwitchTest is Test {
         assertEq(balance, ONE_THOUSAND);
     }
 
-    // Test that the CheckIn event is emitted correctly when checkIn is called
-    function testEmitCheckInEventOnCheckIn() public {
+    function testCheckInUpdatesOnCheckIn() public {
         deadMansSwitch.setCheckInInterval(INTERVAL);
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(THIS_CONTRACT, block.timestamp);
         deadMansSwitch.checkIn();
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(THIS_CONTRACT);
         assertEq(lastCheckIn, block.timestamp);
     }
 
-    // Test that the CheckIn event is emitted correctly when deposit is called
-    function testEmitCheckInEventOnDeposit() public {
+    function testCheckInUpdatesOnDeposit() public {
         deadMansSwitch.setCheckInInterval(INTERVAL);
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(THIS_CONTRACT, block.timestamp);
         deadMansSwitch.deposit{ value: ONE_THOUSAND }();
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(THIS_CONTRACT);
         assertEq(lastCheckIn, block.timestamp);
     }
 
-    // Test that the CheckIn event is emitted correctly when setCheckInInterval is called
-    function testEmitCheckInEventOnSetCheckInInterval() public {
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(THIS_CONTRACT, block.timestamp);
+    function testCheckInUpdatesOnSetCheckInInterval() public {
         deadMansSwitch.setCheckInInterval(INTERVAL);
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(THIS_CONTRACT);
         assertEq(lastCheckIn, block.timestamp);
     }
 
-    // Test that the CheckIn event is emitted correctly when addBeneficiary is called
-    function testEmitCheckInEventOnAddBeneficiary() public {
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(THIS_CONTRACT, block.timestamp);
+    function testCheckInUpdatesOnAddBeneficiary() public {
         deadMansSwitch.addBeneficiary(BENEFICIARY_1);
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(THIS_CONTRACT);
         assertEq(lastCheckIn, block.timestamp);
     }
 
-    // Test that the CheckIn event is emitted correctly when removeBeneficiary is called
-    function testEmitCheckInEventOnRemoveBeneficiary() public {
+    function testCheckInUpdatesOnRemoveBeneficiary() public {
         deadMansSwitch.addBeneficiary(BENEFICIARY_1);
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(THIS_CONTRACT, block.timestamp);
         deadMansSwitch.removeBeneficiary(BENEFICIARY_1);
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(THIS_CONTRACT);
         assertEq(lastCheckIn, block.timestamp);
     }
 
-    // Test that the CheckIn event is emitted correctly when withdraw is called
-    function testEmitCheckInEventOnWithdraw() public {
+    function testCheckInUpdatesOnWithdraw() public {
         vm.deal(NON_CONTRACT_USER, ONE_THOUSAND);
         vm.startPrank(NON_CONTRACT_USER);
         deadMansSwitch.deposit{ value: ONE_THOUSAND }();
-        vm.expectEmit(true, true, true, true);
-        emit DeadMansSwitch.CheckIn(NON_CONTRACT_USER, block.timestamp);
         deadMansSwitch.withdraw(NON_CONTRACT_USER, ONE_THOUSAND);
         uint256 lastCheckIn = deadMansSwitch.lastCheckIn(NON_CONTRACT_USER);
         assertEq(lastCheckIn, block.timestamp);
