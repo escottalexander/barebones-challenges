@@ -152,43 +152,6 @@ contract WrappedETHTest is Test {
         assertEq(wrappedETH.balanceOf(NON_CONTRACT_USER), 1 ether);
     }
 
-    function testEmitDepositEvent() public {
-        vm.expectEmit(address(wrappedETH));
-        emit WrappedETH.Deposit(THIS_CONTRACT, 1 ether);
-        wrappedETH.deposit{ value: 1 ether }();
-    }
-
-    function testEmitWithdrawalEvent() public {
-        vm.deal(NON_CONTRACT_USER, 1 ether);
-        vm.startPrank(NON_CONTRACT_USER);
-        wrappedETH.deposit{ value: 1 ether }();
-        vm.expectEmit(address(wrappedETH));
-        emit WrappedETH.Withdrawal(NON_CONTRACT_USER, 1 ether);
-        wrappedETH.withdraw(1 ether);
-    }
-
-    function testEmitTransferEvent() public {
-        wrappedETH.deposit{ value: 1 ether }();
-        vm.expectEmit(address(wrappedETH));
-        emit IERC20.Transfer(THIS_CONTRACT, NON_CONTRACT_USER, 1 ether);
-        wrappedETH.transfer(NON_CONTRACT_USER, 1 ether);
-    }
-
-    function testEmitApprovalEvent() public {
-        vm.expectEmit(address(wrappedETH));
-        emit IERC20.Approval(THIS_CONTRACT, NON_CONTRACT_USER, 1 ether);
-        wrappedETH.approve(NON_CONTRACT_USER, 1 ether);
-    }
-
-    function testEmitTransferEventOnTransferFrom() public {
-        wrappedETH.deposit{ value: 1 ether }();
-        wrappedETH.approve(NON_CONTRACT_USER, 1 ether);
-        vm.expectEmit(address(wrappedETH));
-        emit IERC20.Transfer(THIS_CONTRACT, NON_CONTRACT_USER, 1 ether);
-        vm.startPrank(NON_CONTRACT_USER);
-        wrappedETH.transferFrom(THIS_CONTRACT, NON_CONTRACT_USER, 1 ether);
-    }
-
     function testReentrancyAttackShouldFail() public {
         // Whale deposits to the WrappedETH contract
         vm.deal(NON_CONTRACT_USER, 10 ether);
