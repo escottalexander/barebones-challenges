@@ -7,7 +7,7 @@ import "./DeployHelpers.s.sol";
 
 contract DeployContracts is ScaffoldETHDeploy {
   function run() external ScaffoldEthDeployerRunner {
-     (address mockToken1, address mockToken2) = deployMockTokens();
+        deployMockTokens();
 
         Multisend multisend = new Multisend();
         console.logString(
