@@ -37,7 +37,7 @@ AMPL uses old contracts called \`UFragments.sol\`, where \`Fragments\` are the E
 
 - User balances should change after a rebase.
 - The rebase mechanism should update the total supply by whatever number it is supplied.
-- As an example, if the total token supply is 10mm and it is rebased with negative 9mm (\`rebase(-9000000)\`) then the total supply is only 1mm and each holder holds 1/10th the amount they held prior to the rebase. A balance of 1000 would become 100. This should work when given a positive number as well. \`rebase(9000000)\` would return the total supply and user balances to what they were prior to the first rebase. 
+- As an example, if the total token supply is 10 million and it is rebased with negative 9 million (\`rebase(-9000000)\`) then the total supply is only 1 million and each holder holds 1/10th the amount they held prior to the rebase. A balance of 1000 would become 100. This should work when given a positive number as well. \`rebase(9000000)\` would return the total supply and user balances to what they were prior to the first rebase. 
 - Don't change token allowances when rebases occur.
 - For the sake of simplicity and to avoid rounding errors you can assume that the rebase method will only be called with large numbers that are wholly divisible by 10e6.
 
