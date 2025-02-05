@@ -20,7 +20,7 @@ Notice the \`DecentralizedResistanceToken.sol\` contract. This contract is the E
 
 Start by defining a contract with the name \`Voting\`.
 
-The constructor should receive an address representing the "DRT" token and a uint256 representing the time period for which the vote will be open. Those parameters should set the value of state variables inside the contract for later use.
+The constructor should receive an address representing the "DRT" token and a uint256 representing the time period for which the vote will be open. Those parameters should set the value of state variables inside the contract for later use. Don't import the DRT contract directly, instead use OpenZeppelin's IERC20 interface.
 
 ---
 
@@ -32,7 +32,7 @@ The constructor should receive an address representing the "DRT" token and a uin
     ...
     constructor(address _tokenAddress, uint256 _votingPeriod) {
         // "token" and "votingDeadline" state variables should be defined somewhere in the contract
-        token = _tokenAddress;
+        token = IERC20(_tokenAddress);
         votingDeadline =  _votingPeriod;
     }
     ...
